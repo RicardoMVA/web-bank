@@ -3,6 +3,7 @@ package com.br.qualiti.bank.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.br.qualiti.bank.exception.ResourceNotFoundException;
@@ -75,6 +76,14 @@ public class CustomerService {
 		}else
 		{
 			throw new ResourceNotFoundException("Customer", "Client", "O cliente com id:"+id+" não encontrado");
+		}
+		
+	}
+	
+	public void delete(long id) {
+		try {
+			customerRepository.deleteById(id);
+		}catch (EmptyResultDataAccessException e) {
 		}
 		
 	}
