@@ -85,5 +85,19 @@ public class CustomerController {
 		}
 	}
 
-
+	/*
+	 * O método create chama o método create da camada de serviço que por sua vez
+	 * chama o save da interface JpaRepository. Após criar o registro na tabela,
+	 * retorna o contato com o atributo id populado e o registro é retornado no
+	 * corpo de resposta. A anotação @RequestBody indica que o parâmetro contact
+	 * será vinculado do corpo da requisição. Isso significa que o método espera o
+	 * seguinte conteúdo do corpo da requisição (em formato JSON) Com o uso dessa
+	 * anotação, o Spring é inteligente e consegue ler e transformar o conteúdo em
+	 * uma instância da classe Customer.
+	 */
+	@PostMapping
+	public Customer create(@RequestBody Customer customer) {
+		return customerService.create(customer);
+	}
+	
 }
