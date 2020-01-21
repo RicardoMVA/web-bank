@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.br.qualiti.bank.exception.ResourceNotFoundException;
 import com.br.qualiti.bank.model.Customer;
 import com.br.qualiti.bank.repository.CustomerRepository;
 
@@ -43,6 +44,39 @@ public class CustomerService {
 	
 	public Customer create(Customer customer) {
 		return customerRepository.save(customer);
+	}
+	
+	/*
+	 * Inicialmente é necessário encontrar o registro a ser atualizado na base de dados. 
+	 * Se o registro for encontrado, faz-se as atualizações necessárias e assim chama-se o método save 
+	 * e retornar os dados do registro atualizados. 
+	 * Note que o método save também foi utilizado na criação do registro. 
+	 * Caso o objeto tenha sido recuperado da base tenha um ID, será realizado um update e não um insert na tabela.
+	 * Caso o registro não seja encontrado, será lançada uma exceção que é retorá um erro HTTP 404 (not found).
+	 */
+	/*
+	 * Um ponto importante para esse método (e também para o processo de criação de registros) 
+	 * é que a própria classe de entidade JPA está sendo utilizada como objeto do tipo parâmetro. 
+	 * Não é uma prática recomendada utilizar a entidade JPA como um objeto de transferência (ou DTO: Data Transfer Object). 
+	 * É sempre bom evitar expor o modelo da base diretamente para o cliente da API. 
+	 * Para esse caso, pode-se criar uma classe com todos os atributos da classe Customer, 
+	 * exceto o atributo id (ou uma classe com atributos que facilite a manipulação dos dados por um front-end por exemplo).
+	 */
+	public Customer update(long id, Customer customer) {
+		Optional<Customer> currentCustomer = customerRepository.findById(id);
+		if(currentCustomer.isPresent())
+		{
+			currentCustomer.get().setName(customer.getName());
+			currentCustomer.get().setCPF(customer.getCPF());
+			if(customer.getAccounts() != null) {
+				currentCustomer.get().getAccounts().addAll(customer.getAccounts());
+			}
+			return customerRepository.save(currentCustomer.get());
+		}else
+		{
+			throw new ResourceNotFoundException("Customer", "Client", "O cliente com id:"+id+" não encontrado");
+		}
+		
 	}
 	
 }

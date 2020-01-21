@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.qualiti.bank.exception.ResourceNotFoundException;
 import com.br.qualiti.bank.model.Customer;
 import com.br.qualiti.bank.service.CustomerService;
 
@@ -98,6 +99,16 @@ public class CustomerController {
 	@PostMapping
 	public Customer create(@RequestBody Customer customer) {
 		return customerService.create(customer);
+	}
+	
+	@PutMapping(value="/{id}")
+	public ResponseEntity update(@PathVariable("id") long id, @RequestBody Customer customer) {
+		try {
+			Customer updatedCustomer = customerService.update(id, customer);
+			return ResponseEntity.ok().body(updatedCustomer);
+		}catch (ResourceNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 }
