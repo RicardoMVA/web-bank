@@ -103,11 +103,11 @@ public class CustomerController {
 	
 	@PutMapping(value="/{id}")
 	public ResponseEntity update(@PathVariable("id") long id, @RequestBody Customer customer) {
-		try {
-			Customer updatedCustomer = customerService.update(id, customer);
+		Customer updatedCustomer = customerService.update(id, customer);
+		if (updatedCustomer == null) {
+			return ResponseEntity.notFound().build();			
+		} else {
 			return ResponseEntity.ok().body(updatedCustomer);
-		}catch (ResourceNotFoundException e) {
-			return ResponseEntity.notFound().build();
 		}
 	}
 	
