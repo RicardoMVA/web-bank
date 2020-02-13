@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.br.qualiti.bank.exception.ResourceNotFoundException;
 import com.br.qualiti.bank.model.Customer;
 import com.br.qualiti.bank.service.CustomerService;
 
@@ -57,7 +56,7 @@ public class CustomerController {
 	 */
 	
 	@GetMapping
-	public List findAll() {
+	public List<?> findAll() {
 		return customerService.findAll();
 	}
 
@@ -66,7 +65,7 @@ public class CustomerController {
 	 * anotação @PathVariable vincula o parâmetro passado pelo método com a variável
 	 * do path. Note que o parâmetro long id tem o mesmo nome do path declarado
 	 * em @GetMapping(path = {"/{id}"}). A lógica para obter um cliente específico é
-	 * utilizar o método findById da interface JpaRepository que encontrase na
+	 * utilizar o método findById da interface JpaRepository que encontra-se na
 	 * camada de serviço (que irá fazer um select * from contacts where id = ?).
 	 * Caso o registro seja encontrado, é retornado o status HTTP 200
 	 * (ResponseEntity.ok()) e no corpo da resposta é enviado o registro. Caso o
@@ -76,7 +75,7 @@ public class CustomerController {
 	 * retorna um ResponseEntity para indicar sucesso ou não.
 	 */
 	@GetMapping(path = { "/{id}" })
-	public ResponseEntity findById(@PathVariable long id) {
+	public ResponseEntity<?> findById(@PathVariable long id) {
 		Optional<Customer> customer = customerService.findById(id);
 		if(customer.isPresent()) {
 			return ResponseEntity.ok().body(customer);
@@ -102,7 +101,7 @@ public class CustomerController {
 	}
 	
 	@PutMapping(value="/{id}")
-	public ResponseEntity update(@PathVariable("id") long id, @RequestBody Customer customer) {
+	public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Customer customer) {
 		Customer updatedCustomer = customerService.update(id, customer);
 		if (updatedCustomer == null) {
 			return ResponseEntity.notFound().build();			
@@ -112,7 +111,7 @@ public class CustomerController {
 	}
 	
 	@DeleteMapping(path ={"/{id}"})
-	public ResponseEntity delete(@PathVariable long id) {
+	public ResponseEntity<?> delete(@PathVariable long id) {
 			customerService.delete(id);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			
