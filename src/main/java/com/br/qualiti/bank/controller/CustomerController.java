@@ -42,7 +42,7 @@ import com.br.qualiti.bank.service.CustomerService;
 public class CustomerController {
 
 	private CustomerService customerService;
-	
+
 //	a injeção da dependência ocorre através do construtor da classe
 	CustomerController(CustomerService customerService) {
 		this.customerService = customerService;
@@ -54,7 +54,7 @@ public class CustomerController {
 	 * API RESTful, pode-se omitir o código @RequestMapping(value="/customer",
 	 * method=RequestMethod.GET) e utilizar somente a anotação @GetMapping.
 	 */
-	
+
 	@GetMapping
 	public List<?> findAll() {
 		return customerService.findAll();
@@ -77,10 +77,9 @@ public class CustomerController {
 	@GetMapping(path = { "/{id}" })
 	public ResponseEntity<?> findById(@PathVariable long id) {
 		Optional<Customer> customer = customerService.findById(id);
-		if(customer.isPresent()) {
+		if (customer.isPresent()) {
 			return ResponseEntity.ok().body(customer);
-		}else
-		{
+		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
@@ -99,22 +98,23 @@ public class CustomerController {
 	public Customer create(@RequestBody Customer customer) {
 		return customerService.create(customer);
 	}
-	
-	@PutMapping(value="/{id}")
+
+	@PutMapping(value = "/{id}")
 	public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Customer customer) {
-		Customer updatedCustomer = customerService.update(id, customer);
-		if (updatedCustomer == null) {
-			return ResponseEntity.notFound().build();			
-		} else {
+		Customer updatedCustomer;
+		try {
+			updatedCustomer = customerService.update(id, customer);
 			return ResponseEntity.ok().body(updatedCustomer);
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	@DeleteMapping(path ={"/{id}"})
+
+	@DeleteMapping(path = { "/{id}" })
 	public ResponseEntity<?> delete(@PathVariable long id) {
-			customerService.delete(id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-			
+		customerService.delete(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
 	}
-	
+
 }
